@@ -1,0 +1,13 @@
+{
+  "name": "fusorContact",
+  "version": "0.0.0",
+  "description": "Handles incoming 'Contact Us' requests for fusorsoft",
+  "main": "main.js",
+  "dependencies": {
+    "colors": "~0.6.2",
+    "moment": "^2.7.0"
+  },
+  "devDependencies": {
+    "nodeunit": "~0.9.0"
+  }
+}
