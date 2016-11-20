@@ -1,23 +1,36 @@
 var colors = require('colors');
 
-colors.setTheme({
-	error: 'red',
-	info: 'grey',
-	init: 'cyan',
-	initinfo: 'yellow'
-});
+class Logger {
+	constructor(logDest) {
+		this.logger = logDest;
 
-function logDate() {
-	return new Date().toISOString();
-}
-
-exports.write = function (message, level, req) {
-	var msg = '';
-	if (req && req.connection && req.connection.remoteAddress) {
-		msg = 'fusorContact: ' + logDate() + ' (' + req.connection.remoteAddress + '): ' + message;
-	} else {
-		msg = 'fusorContact: ' + logDate() + ': ' + message;
+		colors.setTheme({
+			error: 'red',
+			info: 'grey',
+			init: 'cyan',
+			initinfo: 'yellow'
+		});
 	}
 
-	console.log(msg[level]);
-};
+	_logDate() {
+		return new Date().toISOString();
+	}
+
+	write(message, level, req) {
+		let msg = '';
+
+		if (req && req.connection && req.connection.remoteAddress) {
+			msg = 'fusorContact: ' + this._logDate() + ' (' + req.connection.remoteAddress + '): ' + message;
+		} else {
+			msg = 'fusorContact: ' + this._logDate() + ': ' + message;
+		}
+
+		if (level === 'error') {
+			this.logger.error(msg)
+		} else {
+			this.logger.log(msg[level]);
+		}
+	};
+}
+
+module.exports = Logger;

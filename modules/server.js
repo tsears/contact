@@ -1,6 +1,5 @@
 var http = require('http');
 var qs = require('querystring');
-var log = require('./logging');
 var moment = require('moment');
 
 var requestCounts = {};
@@ -12,7 +11,7 @@ var allowedOrigins = [
 	"http://www.fusorsoft.com"
 ];
 
-exports.start = function(port) {
+exports.start = function(log, port) {
 	lastClear = moment();
 	log.write('Set last clear time to ' + lastClear.format('MM/D/YY HH:mm'), 'initinfo');
 
@@ -28,16 +27,16 @@ exports.start = function(port) {
 			log.write('Resetting request counts', 'info');
 			resetRequestCounts();
 		}
-		
+
 		// throttling
 		if (tooManyRequestsFromAddress(requestingAddress)) {
 			log.write('Too Many Requests!', 'error', request);
 			response.writeHead(429, 'Too Many Requests', headers);
 			return response.end();
 		}
-		
+
 		++requestCounts[requestingAddress];
-		
+
 		// check request origin
 		log.write('Checking if origin ' + origin + 'is allowed', 'info');
 		if (!originIsAllowed(origin)) {
@@ -49,7 +48,7 @@ exports.start = function(port) {
 		// fulfill request
 		if (method === 'OPTIONS') {
 			log.write('Responding to OPTIONS request (' + numRequests + ')', 'info', request);
-		
+
 			response.writeHead(204, "No Content", headers);
 			return response.end();
 

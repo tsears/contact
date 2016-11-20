@@ -207,3 +207,4 @@ OperationBreakdown/frontend/scss/main/lib/
 OperationBreakdown/backend/router/routes/api/sandbox.js
 OperationBreakdown/settings.env
 BuddingBabies/settings.env
+config.json
