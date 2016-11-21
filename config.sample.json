@@ -1,3 +1,21 @@
 {
-  
+  "allowedOrigins": [
+    {
+      "origin": "www.origin1.com"
+    },
+    {
+      "origin": "www.origin2.com",
+      "emailUser": "email@origin2.com",
+      "emailPass": "pass",
+      "toAddress": "contact@origin2.com"
+    },
+  ],
+  "defaults" : {
+    "emailUser" : "email@host.com",
+    "emailPass" : "emailPass",
+    "toAddress" : "dest@host.com"
+  },
+  "server": {
+    "port" : 8000
+  }
 }

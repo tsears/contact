@@ -24,6 +24,7 @@ module.exports = {
     this.log = new logger(this.mockConsole);
     done();
   },
+
   'Argment Test 1': function(test) {
     test.expect(1);
 
@@ -32,6 +33,7 @@ module.exports = {
 
     test.done();
   },
+
   'Argument Test 2' : function(test) {
     test.expect(1);
 
@@ -40,6 +42,7 @@ module.exports = {
 
     test.done();
   },
+
   'Calls Log Test': function(test) {
     test.expect(2);
 
@@ -49,6 +52,7 @@ module.exports = {
 
     test.done();
   },
+
   'Calls Error Test': function(test) {
     test.expect(2);
 

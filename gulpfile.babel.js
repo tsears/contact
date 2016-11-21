@@ -2,7 +2,8 @@ import gulp from 'gulp';
 import jshint from 'gulp-jshint';
 import nodemon from 'gulp-nodemon';
 import jsonlint from 'gulp-jsonlint';
-import nodeunit from 'gulp-nodeunit-runner';
+import watch from 'gulp-watch';
+import nodeunit from 'gulp-nodeunit';
 
 /**********************
 
@@ -31,6 +32,7 @@ gulp.task('lint', () => {
 });
 
 gulp.task('nodeunit', () => {
+
   return gulp.src([
     '**/*.test.js',
     '!node_modules/**'
@@ -52,7 +54,7 @@ gulp.task('monitor', () => {
 		script: 'index.js',
 		ext: 'js html',
 		tasks: ['lint', 'nodeunit'],
-		watch: ['tests/', 'modules/', 'index.js'],
+		watch: ['**/*.test.js', '**/*.js', 'index.js', '!node_modules/**'],
 		env: {
 			'NODE_ENV': 'development'
 		},
@@ -64,6 +66,14 @@ gulp.task('monitor', () => {
 	}).on('restart', () => {
 		console.log('Restarting....');
 	});
+});
+
+// Watch Files For Changes
+gulp.task('watch', () => {
+	gulp.watch([
+    'tests/**/*.test.js',
+    'modules/**/*.js'
+  ], ['nodeunit']);
 });
 
 gulp.task('default', [
