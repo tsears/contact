@@ -7,13 +7,15 @@
       "origin": "www.origin2.com",
       "emailUser": "email@origin2.com",
       "emailPass": "pass",
-      "toAddress": "contact@origin2.com"
+      "toAddress": "contact@origin2.com",
+      "mailServer": "mailServer"
     },
   ],
   "defaults" : {
     "emailUser" : "email@host.com",
     "emailPass" : "emailPass",
-    "toAddress" : "dest@host.com"
+    "toAddress" : "dest@host.com",
+    "mailServer": "default.mailserver"
   },
   "server": {
     "port" : 8000

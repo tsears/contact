@@ -24,7 +24,8 @@ module.exports = {
       defaults : {
         "emailUser" : "blah",
         "emailPass" : "blahpass",
-        "toAddress" : "someAddress"
+        "toAddress" : "someAddress",
+        "mailServer" : "server"
       },
       server : {
         port: 8000
@@ -49,7 +50,8 @@ module.exports = {
       defaults : {
         "emailUser" : "blah",
         "emailPass" : "blahpass",
-        "toAddress" : "blahaddress"
+        "toAddress" : "blahaddress",
+        "mailServer": "server"
       },
       server : {
         port: 8000
@@ -94,7 +96,8 @@ module.exports = {
           origin: "foo.com",
           emailUser: "a",
           emailPass: "b",
-          toAddress: "c"
+          toAddress: "c",
+          mailServer: "s"
         },
         {
           origin: "bar.com"
@@ -109,7 +112,8 @@ module.exports = {
           origin: "foo.com",
           emailUser: "a",
           emailPass: "b",
-          toAddress: "c"
+          toAddress: "c",
+          mailServer: "s"
         }
       ],
       server: { port: 1 }
@@ -127,7 +131,8 @@ module.exports = {
       defaults: {
         emailUser: "a",
         emailPass: "b",
-        toAddress: "c"
+        toAddress: "c",
+        mailServer: "s"
       },
       server: { port: 1 }
     };

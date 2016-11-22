@@ -16,6 +16,10 @@ class Origin {
         fullData.toAddress = defaults.toAddress;
       }
 
+      if (!o.mailServer) {
+        fullData.mailServer = defaults.mailServer;
+      }
+
       this.origins[o.origin] = fullData;
     }
   }

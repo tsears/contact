@@ -5,7 +5,8 @@
   "main": "main.js",
   "dependencies": {
     "colors": "~0.6.2",
-    "moment": "^2.7.0"
+    "moment": "^2.7.0",
+    "nodemailer": "^2.6.4"
   },
   "devDependencies": {
     "babel-core": "^6.18.2",

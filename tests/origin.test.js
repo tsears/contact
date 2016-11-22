@@ -11,7 +11,8 @@ module.exports = {
         origin: "www.foo.com",
         emailUser: "user",
         emailPass: "pass",
-        toAddress: "to"
+        toAddress: "to",
+        mailServer: "mailServer"
       }, {
         origin: "www.bar.com",
       }],
@@ -21,7 +22,8 @@ module.exports = {
       defaults: {
         emailUser: "defaultUser",
         emailPass: "defaultPass",
-        toAddress: "defaultToAddress"
+        toAddress: "defaultToAddress",
+        mailServer: "mailServer"
       }
     };
 

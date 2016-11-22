@@ -6,11 +6,13 @@ let Origin = require('./modules/origin');
 
 let logger = new Logger(console);
 
-log.write('Initializing...', 'init');
-log.write('Loading Configuration', 'initinfo');
+logger.write('Initializing...', 'init');
+logger.write('Loading Configuration', 'initinfo');
 let config = new Config(require('./config.json'));
+logger.write('Loading Throttle Control', 'initinfo');
 let throttler = new Throttler(5);
+logger.write('Loading Origin Counters', 'initinfo');
 let origin = new Origin(config.allowedOrigins, config.defaults);
 
-log.write('Starting Server', 'initinfo');
-server.start(log, config, throttler, origin);
+logger.write('Starting Server', 'initinfo');
+server.start(logger, config, throttler, origin);

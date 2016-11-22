@@ -1,14 +1,27 @@
-var http = require('http');
-var qs = require('querystring');
+let http = require('http');
+let Mailer = require('./mailer');
+let nodemailer = require('nodemailer');
+let smtpTransport = require("nodemailer-smtp-transport");
 
 exports.start = function(log, cfg, throttler, origin) {
-
 
 	http.createServer(function(request, response) {
 		let requestingAddress = request.connection.remoteAddress;
 		let requestOrigin = request.headers.origin;
 		let headers = getHeaders(requestOrigin);
 		let method = request.method.toUpperCase();
+
+		function getHeaders(source) {
+			// w3c recommends you echo back the requesting origin after checking against an internal whitelist,
+			// presumably to avoid divulging which origins are valid.
+			var headers = {};
+			headers["Access-Control-Allow-Origin"] =  origin.origins[source] ? source : '';
+			headers["Access-Control-Allow-Methods"] = "PUT, OPTIONS";
+			headers["Access-Control-Max-Age"] = '86400'; // 24 hours
+			headers["Access-Control-Allow-Headers"] = "X-Requested-With, Access-Control-Allow-Origin, X-HTTP-Method-Override, Content-Type, Authorization, Accept";
+
+			return headers;
+		}
 
 		// throttling
 		throttler.request(requestingAddress);
@@ -23,7 +36,7 @@ exports.start = function(log, cfg, throttler, origin) {
 
 		// check request origin
 		log.write(`Checking if origin ${requestOrigin} is allowed`, 'info');
-		if (!origin.origins[origin]) {
+		if (!origin.origins[requestOrigin]) {
 			log.write(`Invalid request from ${requestOrigin}`, 'error', request);
 			response.writeHead('403', 'Forbidden', headers);
 			return response.end();
@@ -39,7 +52,7 @@ exports.start = function(log, cfg, throttler, origin) {
 		} else if(method === 'PUT') {
 			log.write(`Responding to PUT request (${numRequests})`, 'info', request);
 
-			var requestBodyBuffer = [];
+			let requestBodyBuffer = [];
 
 			request.on("data", function(chunk) {
 				requestBodyBuffer.push(chunk);
@@ -47,8 +60,21 @@ exports.start = function(log, cfg, throttler, origin) {
 
 			request.on("end", function() {
 				// Flatten our body buffer to get the request content.
-				var requestBody = requestBodyBuffer.join( "" );
-				console.log(requestBody);
+				let requestBody = JSON.parse(requestBodyBuffer.join( "" ));
+
+				let mailer = new Mailer(origin.origins[requestOrigin], nodemailer, smtpTransport, log);
+
+				let sender = origin.origins[requestOrigin].toAddress;
+				let subject = `Contact request from ${sender}`;
+				let message = `<h1>Contact request from ${sender}</h1><table>`;
+
+				for(let i in requestBody) {
+					message+= `<tr><th>${i}</th><td>${requestBody[i]}</td></tr>`
+				}
+
+				message += "</table>"
+
+				mailer.sendEmail(sender, subject, message)
 			});
 
 			response.writeHead(204, "No Content", headers);
@@ -64,15 +90,3 @@ exports.start = function(log, cfg, throttler, origin) {
 
 	log.write(`Server Started on port ${cfg.server.port}`, 'initinfo');
 };
-
-function getHeaders(origin) {
-	// w3c recommends you echo back the requesting origin after checking against an internal whitelist,
-	// presumably to avoid divulging which origins are valid.
-	var headers = {};
-	headers["Access-Control-Allow-Origin"] =  originIsAllowed(origin) ? origin : '';
-	headers["Access-Control-Allow-Methods"] = "PUT, OPTIONS";
-	headers["Access-Control-Max-Age"] = '86400'; // 24 hours
-	headers["Access-Control-Allow-Headers"] = "X-Requested-With, Access-Control-Allow-Origin, X-HTTP-Method-Override, Content-Type, Authorization, Accept";
-
-	return headers;
-}
