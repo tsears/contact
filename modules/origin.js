@@ -4,20 +4,36 @@ class Origin {
     for (let o of originInfo) {
       let fullData = o;
 
-      if (!o.emailUser) {
-        fullData.emailUser = defaults.emailUser;
-      }
+      if (!o.mailSettings) {
+        fullData.mailSettings = defaults.mailSettings;
+      } else {
+        if (!o.mailSettings.user) {
+          fullData.mailSettings.user = defaults.mailSettings.user;
+        }
 
-      if (!o.emailPass) {
-        fullData.emailPass = defaults.emailPass;
+        if (!o.mailSettings.pass) {
+          fullData.mailSettings.pass = defaults.mailSettings.pass;
+        }
+
+        if (!o.mailSettings.server) {
+          fullData.mailSettings.server = defaults.mailSettings.server;
+        }
+
+        if (!o.mailSettings.port) {
+          fullData.mailSettings.port = defaults.mailSettings.port;
+        }
+
+        if (!('secure' in o.mailSettings)) {
+          fullData.mailSettings.secure = defaults.mailSettings.secure;
+        }
       }
 
       if (!o.toAddress) {
         fullData.toAddress = defaults.toAddress;
       }
 
-      if (!o.mailServer) {
-        fullData.mailServer = defaults.mailServer;
+      if (!o.allowedFields) {
+        fullData.allowedFields = defaults.allowedFields;
       }
 
       this.origins[o.origin] = fullData;

@@ -1,21 +1,37 @@
 {
   "allowedOrigins": [
     {
-      "origin": "www.origin1.com"
+      "origin": "www.origin1.com",
+      "allowedFields": [
+        "email",
+        "request"
+      ]
     },
     {
       "origin": "www.origin2.com",
-      "emailUser": "email@origin2.com",
-      "emailPass": "pass",
       "toAddress": "contact@origin2.com",
-      "mailServer": "mailServer"
+      "mailSettings" : {
+        "user": "email@origin2.com",
+        "pass": "pass",
+        "server": "mailServer",
+        "port": 123,
+        "secure": false
+      },
+      "allowedFields": [
+        "email",
+        "request"
+      ]
     },
   ],
   "defaults" : {
-    "emailUser" : "email@host.com",
-    "emailPass" : "emailPass",
     "toAddress" : "dest@host.com",
-    "mailServer": "default.mailserver"
+    "mailSettings": {
+      "user" : "email@host.com",
+      "pass" : "emailPass",
+      "server": "default.mailserver",
+      "port" : 123,
+      "secure": false
+    }
   },
   "server": {
     "port" : 8000

@@ -15,25 +15,33 @@ module.exports = {
     let cfg = {
       allowedOrigins: [
         {
-          origin: "http://foo.bar"
+          origin: "http://foo.bar",
+          allowedFields: ["foo", "bar"]
         },
         {
-          origin: "http://bar.baz"
+          origin: "http://bar.baz",
+          allowedFields: ["bar", "baz"]
         }
       ],
       defaults : {
-        "emailUser" : "blah",
-        "emailPass" : "blahpass",
-        "toAddress" : "someAddress",
-        "mailServer" : "server"
+        mailSettings: {
+          user : "blah",
+          pass : "blahpass",
+          server : "server",
+          port: 123,
+          secure: false
+        },
+        toAddress : "someAddress",
+        allowedFields : ["baz", "wut"]
       },
       server : {
         port: 8000
       }
     };
 
-    test.doesNotThrow(() => { new this.Config(cfg); } , Error,
-      'Should not throw on good file');
+    test.doesNotThrow(() => {
+        new this.Config(cfg);
+      } , Error, 'Should not throw on good file');
 
     test.done();
   },
@@ -48,10 +56,15 @@ module.exports = {
         },
       ],
       defaults : {
-        "emailUser" : "blah",
-        "emailPass" : "blahpass",
-        "toAddress" : "blahaddress",
-        "mailServer": "server"
+        mailSettings: {
+          user : "blah",
+          pass : "blahpass",
+          server : "server",
+          port: 123,
+          secure: false
+        },
+        toAddress : "someAddress",
+        allowedFields: ['foo', 'bar']
       },
       server : {
         port: 8000
@@ -94,13 +107,14 @@ module.exports = {
       allowedOrigins: [
         {
           origin: "foo.com",
-          emailUser: "a",
-          emailPass: "b",
           toAddress: "c",
-          mailServer: "s"
-        },
-        {
-          origin: "bar.com"
+          mailSettings: {
+            user : "blah",
+            server : "server",
+            port: 123,
+            secure: false
+          },
+          allowedFields: ["foo"]
         }
       ],
       server: { port: 1}
@@ -110,10 +124,15 @@ module.exports = {
       allowedOrigins: [
         {
           origin: "foo.com",
-          emailUser: "a",
-          emailPass: "b",
           toAddress: "c",
-          mailServer: "s"
+          mailSettings: {
+            user : "blah",
+            pass : "blahpass",
+            server : "server",
+            port: 123,
+            secure: false
+          },
+          allowedFields: ["baz"]
         }
       ],
       server: { port: 1 }
@@ -128,11 +147,16 @@ module.exports = {
           origin: "bar.com"
         }
       ],
-      defaults: {
-        emailUser: "a",
-        emailPass: "b",
-        toAddress: "c",
-        mailServer: "s"
+      defaults : {
+        mailSettings: {
+          user : "blah",
+          pass : "blahpass",
+          server : "server",
+          port: 123,
+          secure: false
+        },
+        toAddress : "someAddress",
+        allowedFields: ["bar"]
       },
       server: { port: 1 }
     };

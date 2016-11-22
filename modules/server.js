@@ -69,12 +69,12 @@ exports.start = function(log, cfg, throttler, origin) {
 				let message = `<h1>Contact request from ${sender}</h1><table>`;
 
 				for(let i in requestBody) {
-					message+= `<tr><th>${i}</th><td>${requestBody[i]}</td></tr>`
+					message+= `<tr><th>${i}</th><td>${requestBody[i]}</td></tr>`;
 				}
 
-				message += "</table>"
+				message += "</table>";
 
-				mailer.sendEmail(sender, subject, message)
+				mailer.sendEmail(sender, subject, message);
 			});
 
 			response.writeHead(204, "No Content", headers);

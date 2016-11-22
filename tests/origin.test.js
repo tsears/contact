@@ -9,10 +9,18 @@ module.exports = {
     let cfg = {
       allowedOrigins: [{
         origin: "www.foo.com",
-        emailUser: "user",
-        emailPass: "pass",
+        allowedFields: [
+          "email",
+          "request"
+        ],
         toAddress: "to",
-        mailServer: "mailServer"
+        mailSettings: {
+          user : "user",
+          pass : "pass",
+          server : "server",
+          port: 123,
+          secure: false
+        }
       }, {
         origin: "www.bar.com",
       }],
@@ -20,10 +28,15 @@ module.exports = {
         port: 1
       },
       defaults: {
-        emailUser: "defaultUser",
-        emailPass: "defaultPass",
         toAddress: "defaultToAddress",
-        mailServer: "mailServer"
+        allowedFields: ['bar', 'baz'],
+        mailSettings: {
+          user : "defaultUser",
+          pass : "defaultPass",
+          server : "defaultServer",
+          port: 123,
+          secure: false
+        },
       }
     };
 
@@ -45,17 +58,25 @@ module.exports = {
   },
 
   'Origin Configuration Tests': function(test) {
-    test.expect(6);
+    test.expect(14);
 
     let origin = new Origin(this.config.allowedOrigins, this.config.defaults);
 
-    test.strictEqual(origin.origins["www.foo.com"].emailUser, "user", "foo.com emailUser should be 'user'");
-    test.strictEqual(origin.origins["www.foo.com"].emailPass, "pass", "foo.com emailPass should be 'pass'");
+    test.strictEqual(origin.origins["www.foo.com"].mailSettings.user, "user", "foo.com mail user should be 'user'");
+    test.strictEqual(origin.origins["www.foo.com"].mailSettings.pass, "pass", "foo.com mail pass should be 'pass'");
+    test.strictEqual(origin.origins["www.foo.com"].mailSettings.server, "server", "foo.com mail server should be 'server'");
+    test.strictEqual(origin.origins["www.foo.com"].mailSettings.port, 123, "foo.com mail port should be 123");
+    test.strictEqual(origin.origins["www.foo.com"].mailSettings.secure, false, "foo.com mail secure should be false");
     test.strictEqual(origin.origins["www.foo.com"].toAddress, "to", "foo.com toAddress should be 'to'");
+    test.strictEqual(origin.origins["www.foo.com"].allowedFields[0], "email", "foo.com should allow 'email' as a submission field");
 
-    test.strictEqual(origin.origins["www.bar.com"].emailUser, "defaultUser", "bar.com emailUser should come from defaults");
-    test.strictEqual(origin.origins["www.bar.com"].emailPass, "defaultPass", "bar.com emailPass should come from defaults");
+    test.strictEqual(origin.origins["www.bar.com"].mailSettings.user, "defaultUser", "bar.com email user should come from defaults");
+    test.strictEqual(origin.origins["www.bar.com"].mailSettings.pass, "defaultPass", "bar.com email pass should come from defaults");
+    test.strictEqual(origin.origins["www.bar.com"].mailSettings.server, "defaultServer", "bar.com mail server should come from defaults");
+    test.strictEqual(origin.origins["www.bar.com"].mailSettings.port, 123, "bar.com mail port should come from defaults");
+    test.strictEqual(origin.origins["www.bar.com"].mailSettings.secure, false, "bar.com mail secure should come from defaults");
     test.strictEqual(origin.origins["www.bar.com"].toAddress, "defaultToAddress", "bar.com toAddress should come from defaults");
+    test.strictEqual(origin.origins["www.bar.com"].allowedFields[0], "bar", "bar.com allowedFields should come from defaults");
 
     test.done();
   }

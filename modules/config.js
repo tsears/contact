@@ -20,13 +20,29 @@ class Config {
 		// those present!
 		if (!cfg.defaults) {
 			for(let o of cfg.allowedOrigins) {
-				if (!o.emailUser || !o.emailPass || !o.toAddress || !o.mailServer) {
+				if (
+					!("mailSettings" in o) ||
+					!("user" in o.mailSettings) ||
+					!("pass" in o.mailSettings) ||
+					!("server" in o.mailSettings) ||
+					!("port" in o.mailSettings) ||
+					!("secure" in o.mailSettings) ||
+					!("toAddress" in o) ||
+					!("allowedFields" in o)) {
 					throw new Error("If there are no defaults specified, all origins must contain emailUser, emailPass, toAddress");
 				}
 			}
 		} else {
 			// if there is a defaults section, all fields must be present
-			if (!cfg.defaults.emailUser || !cfg.defaults.emailPass || !cfg.defaults.toAddress || !cfg.defaults.mailServer) {
+			if (
+					!("mailSettings" in cfg.defaults) ||
+					!("user" in cfg.defaults.mailSettings) ||
+					!("pass" in cfg.defaults.mailSettings) ||
+					!("server" in cfg.defaults.mailSettings) ||
+					!("port" in cfg.defaults.mailSettings) ||
+					!("secure" in cfg.defaults.mailSettings) ||
+					!("toAddress" in cfg.defaults) ||
+					!("allowedFields" in cfg.defaults)) {
 				throw new Error("If a defaults section is present, it must contain all fields");
 			}
 		}
