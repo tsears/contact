@@ -80,7 +80,7 @@ module.exports = {
       defaults: true
     };
 
-    test.throws(() => { new this.Config(cfg2) }, Error, 'Should throw on missing server section');
+    test.throws(() => { new this.Config(cfg2); }, Error, 'Should throw on missing server section');
 
     test.done();
   },
@@ -101,7 +101,7 @@ module.exports = {
         }
       ],
       server: { port: 1}
-    }
+    };
 
     let cfg2 = {
       allowedOrigins: [
@@ -161,7 +161,7 @@ module.exports = {
       server: {
         port: 1
       }
-    }
+    };
 
     test.throws(() => { new this.Config(cfg); }, Error, "Should throw if server is missing a required value");
 

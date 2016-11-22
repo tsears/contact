@@ -12,23 +12,24 @@ import nodeunit from 'gulp-nodeunit';
 ***********************/
 
 gulp.task('jsonlint', () => {
-    return gulp.src([
-      'config.json',
-      'config.sample.json',
-    ])
-    .pipe(jsonlint())
-    .pipe(jsonlint.reporter());
+  return gulp.src([
+    'config.json',
+    'config.sample.json',
+  ])
+  .pipe(jsonlint())
+  .pipe(jsonlint.reporter());
 });
 
 gulp.task('lint', () => {
   return gulp.src([
     'gulpfile.babel.js',
-    '**/*.js'
+    '**/*.js',
+    '!node_modules/**'
   ])
   .pipe(jshint({
     esversion: 6
   }))
-  pipe(jshint.reporter('default'));
+  .pipe(jshint.reporter('default'));
 });
 
 gulp.task('nodeunit', () => {
@@ -40,7 +41,7 @@ gulp.task('nodeunit', () => {
   .pipe(nodeunit({
     reporter: 'default'
   }));
-})
+});
 
 /*****************************
 
@@ -73,7 +74,7 @@ gulp.task('watch', () => {
 	gulp.watch([
     'tests/**/*.test.js',
     'modules/**/*.js'
-  ], ['nodeunit']);
+  ], ['nodeunit', 'lint']);
 });
 
 gulp.task('default', [

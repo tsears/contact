@@ -2,7 +2,7 @@ class Config {
 	constructor(d) {
 		let cfg = d;
 
-		this._validate(cfg)
+		this._validate(cfg);
 
 		this.allowedOrigins = cfg.allowedOrigins;
 		this.defaults = cfg.defaults;

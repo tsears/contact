@@ -1,59 +1,43 @@
 var http = require('http');
 var qs = require('querystring');
-var moment = require('moment');
 
-var requestCounts = {};
-var lastClear = '';
+exports.start = function(log, cfg, throttler, origin) {
 
-var allowedOrigins = [
-	"http://localhost:4000",
-	"http://fusorsoft.com",
-	"http://www.fusorsoft.com"
-];
-
-exports.start = function(log, port) {
-	lastClear = moment();
-	log.write('Set last clear time to ' + lastClear.format('MM/D/YY HH:mm'), 'initinfo');
 
 	http.createServer(function(request, response) {
-		var requestingAddress = request.connection.remoteAddress;
-		var numRequests = requestCounts[requestingAddress];
-		var origin = request.headers.origin;
-		var headers = getHeaders(origin);
-		var method = request.method.toUpperCase();
-
-		// reset throttles at least daily.
-		if (daysSinceThrottleReset() > 1) {
-			log.write('Resetting request counts', 'info');
-			resetRequestCounts();
-		}
+		let requestingAddress = request.connection.remoteAddress;
+		let requestOrigin = request.headers.origin;
+		let headers = getHeaders(requestOrigin);
+		let method = request.method.toUpperCase();
 
 		// throttling
-		if (tooManyRequestsFromAddress(requestingAddress)) {
-			log.write('Too Many Requests!', 'error', request);
+		throttler.request(requestingAddress);
+
+		if (throttler.isThrottled(requestingAddress)) {
+			log.write(`Too Many Requests from ${requestingAddress}`, 'error', request);
 			response.writeHead(429, 'Too Many Requests', headers);
 			return response.end();
 		}
 
-		++requestCounts[requestingAddress];
+		let numRequests = throttler.requestCountForRequestor(requestingAddress);
 
 		// check request origin
-		log.write('Checking if origin ' + origin + 'is allowed', 'info');
-		if (!originIsAllowed(origin)) {
-			log.write('Invalid request from ' + origin, 'error', request);
+		log.write(`Checking if origin ${requestOrigin} is allowed`, 'info');
+		if (!origin.origins[origin]) {
+			log.write(`Invalid request from ${requestOrigin}`, 'error', request);
 			response.writeHead('403', 'Forbidden', headers);
 			return response.end();
 		}
 
 		// fulfill request
 		if (method === 'OPTIONS') {
-			log.write('Responding to OPTIONS request (' + numRequests + ')', 'info', request);
+			log.write(`Responding to OPTIONS request (${numRequests})`, 'info', request);
 
 			response.writeHead(204, "No Content", headers);
 			return response.end();
 
 		} else if(method === 'PUT') {
-			log.write('Responding to PUT request (' + numRequests + ')', 'info', request);
+			log.write(`Responding to PUT request (${numRequests})`, 'info', request);
 
 			var requestBodyBuffer = [];
 
@@ -70,15 +54,15 @@ exports.start = function(log, port) {
 			response.writeHead(204, "No Content", headers);
 			response.end();
 		}  else {
-			log.write('Received ' + method + ' request (' + numRequests + ')', 'info', request);
+			log.write(`Received ${method} request (${numRequests})`, 'info', request);
 			log.write('Invalid request type', 'error', request);
 			response.writeHead(405, "OK", {'Content-Type': 'text/plain'});
 			return response.end();
 		}
 
-	}).listen(port);
+	}).listen(cfg.server.port);
 
-	log.write('Server Started on port ' + port, 'initinfo');
+	log.write(`Server Started on port ${cfg.server.port}`, 'initinfo');
 };
 
 function getHeaders(origin) {
@@ -91,28 +75,4 @@ function getHeaders(origin) {
 	headers["Access-Control-Allow-Headers"] = "X-Requested-With, Access-Control-Allow-Origin, X-HTTP-Method-Override, Content-Type, Authorization, Accept";
 
 	return headers;
-}
-
-function originIsAllowed(origin) {
-	return allowedOrigins.indexOf(origin) > -1;
-}
-
-function daysSinceThrottleReset() {
-	return moment().diff(lastClear, 'days');
-}
-
-function resetRequestCounts() {
-	requestCounts = {};
-}
-
-function requestsFromAddress(address) {
-	if (!requestCounts[address]) {
-		requestCounts[address] = 0;
-	}
-
-	return requestCounts[address];
-}
-
-function tooManyRequestsFromAddress(address) {
-	return requestsFromAddress(address) > 5;
 }

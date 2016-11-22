@@ -26,11 +26,11 @@ class Logger {
 		}
 
 		if (level === 'error') {
-			this.logger.error(msg)
+			this.logger.error(msg);
 		} else {
 			this.logger.log(msg[level]);
 		}
-	};
+	}
 }
 
 module.exports = Logger;
