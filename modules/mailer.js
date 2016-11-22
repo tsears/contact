@@ -9,17 +9,17 @@ class Mailer {
   sendEmail (to, subject, message) {
 
   	let transport = this.mailer.createTransport(this.transport({
-  		host: this.settings.mailServer,
-  		port: 587,
-  		secureConnection: false,
+  		host: this.settings.mailSettings.server,
+  		port: this.settings.mailSettings.port,
+  		secureConnection: this.settings.mailSettings.secure,
   		auth: {
-  			user: this.settings.emailUser,
-  			pass: this.settings.emailPass
+  			user: this.settings.mailSettings.user,
+  			pass: this.settings.mailSettings.pass
   		}
   	}));
 
   	let mail = {
-  		from: this.settings.emailUser,
+  		from: this.settings.mailSettings.user,
   		to: this.settings.toAddress,
   		subject: subject,
   		html: message
@@ -28,10 +28,11 @@ class Mailer {
     let logger = this.log;
     let settings = this.settings;
 
-    logger.write(`Sending mail to ${mail.to} using ${settings.mailServer}`, 'info');
+    logger.write(`Sending mail to ${mail.to} using ${settings.mailSettings.server}`, 'info');
+
   	return new Promise((resolve, reject) => {
       transport.sendMail(mail, function(err, resp) {
-        logger.write(`Mail sent to ${mail.to} using ${settings.mailServer}`, 'info');
+        logger.write(`Mail sent to ${mail.to} using ${settings.mailSettings.server}`, 'info');
     		if (err) {
     			reject(err);
     		} else {

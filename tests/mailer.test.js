@@ -8,7 +8,7 @@ let Mailer = require('../modules/mailer.js');
 module.exports = {
   setUp: function(done) {
 
-    this.transport = () => { return true; }
+    this.transport = () => { return true; };
 
     this.mailer = {
       createTransport: function(t) {
@@ -33,13 +33,17 @@ module.exports = {
     test.expect(1);
 
     let settings = {
-      emailUser: "user",
-      emailPass: "pass",
-      mailServer: "server",
+      mailSettings: {
+        user: "user",
+        pass: "pass",
+        server: "server",
+        port: 123,
+        secure: false
+      },
       toAddress: "to"
     };
 
-    let mailer = new Mailer({}, this.mailer, this.transport, this.log);
+    let mailer = new Mailer(settings, this.mailer, this.transport, this.log);
 
     mailer.sendEmail("a", "b", "c").then((resp) => {
 

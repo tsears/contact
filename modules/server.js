@@ -2,6 +2,7 @@ let http = require('http');
 let Mailer = require('./mailer');
 let nodemailer = require('nodemailer');
 let smtpTransport = require("nodemailer-smtp-transport");
+let MailBuilder = require('./mailbuilder');
 
 exports.start = function(log, cfg, throttler, origin) {
 
@@ -63,18 +64,14 @@ exports.start = function(log, cfg, throttler, origin) {
 				let requestBody = JSON.parse(requestBodyBuffer.join( "" ));
 
 				let mailer = new Mailer(origin.origins[requestOrigin], nodemailer, smtpTransport, log);
-
 				let sender = origin.origins[requestOrigin].toAddress;
-				let subject = `Contact request from ${sender}`;
-				let message = `<h1>Contact request from ${sender}</h1><table>`;
+				let mailBuilder = new MailBuilder(
+					origin.origins[requestOrigin],
+					('email' in requestBody) ?  requestBody.email : "Anonymous",
+					requestBody);
+				let message = mailBuilder.getMessage();
 
-				for(let i in requestBody) {
-					message+= `<tr><th>${i}</th><td>${requestBody[i]}</td></tr>`;
-				}
-
-				message += "</table>";
-
-				mailer.sendEmail(sender, subject, message);
+				mailer.sendEmail(sender, message.subject, message.content);
 			});
 
 			response.writeHead(204, "No Content", headers);
